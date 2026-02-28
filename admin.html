@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>관리자 · 신진평장터과일</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --green: #22C55E; --green-bg: #F0FDF4;
+  --text: #111827; --sub: #6B7280; --muted: #9CA3AF;
+  --bg: #F9FAFB; --surface: #fff;
+  --border: #F3F4F6; --border-s: #E5E7EB;
+  --danger: #EF4444; --danger-bg: #FEF2F2;
+  --blue: #3B82F6; --blue-bg: #EFF6FF;
+  --orange: #F59E0B; --orange-bg: #FFFBEB;
+}
+body { font-family:'Pretendard',-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; max-width:430px; margin:0 auto; -webkit-font-smoothing:antialiased; }
+.login-page { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:40px 24px; }
+.login-logo { font-size:28px; font-weight:800; letter-spacing:-0.7px; margin-bottom:6px; }
+.login-logo span { color:var(--green); }
+.login-sub { font-size:15px; color:var(--sub); margin-bottom:48px; }
+.inp { width:100%; padding:14px 16px; border:1.5px solid var(--border-s); border-radius:12px; font-size:15px; font-family:inherit; outline:none; -webkit-appearance:none; color:var(--text); background:white; transition:border-color 0.15s; }
+.inp:focus { border-color:var(--text); }
+.btn-main { width:100%; padding:15px; border-radius:14px; border:none; background:var(--text); color:white; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; }
+.hint { font-size:12px; color:var(--muted); text-align:center; margin-top:14px; }
+.hd { background:white; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+.hd-logo { font-size:16px; font-weight:800; letter-spacing:-0.5px; }
+.hd-logo span { color:var(--green); }
+.hd-date { font-size:13px; font-weight:600; color:var(--sub); }
+.btn-logout { font-size:13px; font-weight:600; color:var(--muted); background:none; border:none; cursor:pointer; font-family:inherit; }
+.tabs { display:flex; background:white; border-bottom:1px solid var(--border); }
+.tab { flex:1; padding:14px 0; font-size:14px; font-weight:700; color:var(--muted); cursor:pointer; border:none; border-bottom:2px solid transparent; background:none; font-family:inherit; }
+.tab.on { color:var(--text); border-bottom-color:var(--text); }
+.page { display:none; }
+.page.on { display:block; }
+.stat-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border-bottom:1px solid var(--border); }
+.stat-cell { background:white; padding:14px 12px; text-align:center; }
+.stat-cell .v { font-size:22px; font-weight:800; letter-spacing:-1px; }
+.stat-cell .l { font-size:11px; color:var(--sub); margin-top:2px; font-weight:600; }
+.v-green{color:var(--green)} .v-blue{color:var(--blue)}
+.filter-row { display:flex; gap:6px; padding:12px 16px; overflow-x:auto; scrollbar-width:none; background:white; border-bottom:1px solid var(--border); }
+.filter-row::-webkit-scrollbar{display:none}
+.pill { flex-shrink:0; padding:6px 14px; border-radius:100px; border:1.5px solid var(--border-s); background:white; font-size:13px; font-weight:600; color:var(--sub); cursor:pointer; font-family:inherit; white-space:nowrap; }
+.pill.on { background:var(--text); border-color:var(--text); color:white; }
+.search-row { display:flex; gap:8px; padding:10px 16px; background:white; border-bottom:1px solid var(--border); }
+.search-inp { flex:1; padding:10px 14px; border:1.5px solid var(--border-s); border-radius:10px; font-size:14px; font-family:inherit; outline:none; -webkit-appearance:none; }
+.search-inp:focus{border-color:var(--text)}
+.order-card { background:white; margin:8px 16px 0; border-radius:16px; border:1px solid var(--border-s); overflow:hidden; }
+.oc-top { padding:14px 16px 12px; display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--border); }
+.oc-name{font-size:15px;font-weight:700} .oc-phone{font-size:13px;color:var(--sub);margin-top:2px} .oc-addr{font-size:12px;color:var(--muted);margin-top:2px}
+.oc-body{padding:12px 16px} .oc-items{font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:10px}
+.oc-foot{display:flex;justify-content:space-between;align-items:center} .oc-total{font-size:16px;font-weight:800} .oc-meta{font-size:11px;color:var(--muted);text-align:right;line-height:1.5}
+.oc-actions{display:flex;gap:8px;padding:0 16px 14px}
+.act-btn{flex:1;padding:10px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.act-done{background:var(--green-bg);color:#15803D} .act-cancel{background:var(--danger-bg);color:var(--danger)}
+.badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.b-pending{background:var(--blue-bg);color:var(--blue)} .b-done{background:var(--green-bg);color:#15803D} .b-cancel{background:var(--bg);color:var(--muted)}
+.b-card{background:#F3F4F6;color:#374151} .b-transfer{background:#EEF2FF;color:#4338CA} .b-pickup{background:#FEF3C7;color:#92400E}
+.today-banner{margin:16px 16px 0;background:white;border-radius:16px;border:1px solid var(--border-s);padding:16px}
+.tb-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tb-title{font-size:16px;font-weight:800;letter-spacing:-0.4px} .tb-date{font-size:13px;color:var(--sub);font-weight:600}
+.tb-stats{display:flex;gap:8px} .tb-stat{flex:1;background:var(--bg);border-radius:10px;padding:10px;text-align:center}
+.tb-stat .n{font-size:20px;font-weight:800} .tb-stat .l{font-size:11px;color:var(--sub);margin-top:2px}
+.date-tabs{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
+.date-tabs::-webkit-scrollbar{display:none}
+.dt{flex-shrink:0;padding:8px 16px;border-radius:100px;border:1.5px solid var(--border-s);background:white;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit}
+.dt.on{background:var(--text);border-color:var(--text);color:white}
+.dt .cnt{font-size:10px;font-weight:600;display:block;margin-top:2px;color:var(--green)}
+.dt.on .cnt{color:rgba(255,255,255,0.7)}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px}
+.sec-title{font-size:15px;font-weight:800;letter-spacing:-0.4px}
+.btn-add{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--text);color:white;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.prod-item{background:white;margin:0 16px 6px;border-radius:14px;border:1px solid var(--border);overflow:hidden}
+.prod-item.sold-out{opacity:0.55}
+.prod-item-inner{padding:14px 16px;display:flex;align-items:center;gap:12px}
+.pi-info{flex:1;min-width:0} .pi-name{font-size:15px;font-weight:700;letter-spacing:-0.3px} .pi-meta{font-size:13px;color:var(--sub);margin-top:2px}
+.pi-stock-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.pi-stock{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+.s-ok{background:var(--green-bg);color:#15803D} .s-low{background:var(--orange-bg);color:#92400E} .s-out{background:var(--danger-bg);color:var(--danger)}
+.quick-stock{display:flex;align-items:center;border:1.5px solid var(--border-s);border-radius:10px;overflow:hidden}
+.qs-btn{width:32px;height:32px;border:none;background:var(--bg);font-size:16px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;color:var(--sub)}
+.qs-btn:active{background:var(--border-s)}
+.qs-val{width:36px;text-align:center;font-size:14px;font-weight:700;border:none;border-left:1px solid var(--border-s);border-right:1px solid var(--border-s);outline:none;padding:0;font-family:inherit;color:var(--text);background:white}
+.prod-actions{display:flex;border-top:1px solid var(--border)}
+.pa-btn{flex:1;padding:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;background:white;color:var(--sub)}
+.pa-btn:not(:last-child){border-right:1px solid var(--border)}
+.pa-btn:active{background:var(--bg)} .pa-btn.red{color:var(--danger)} .pa-btn.green{color:var(--green)}
+.empty{text-align:center;padding:48px 24px} .empty .et{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--sub)} .empty .es{font-size:13px;color:var(--muted);line-height:1.7}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px}
+.stat-card{background:white;border-radius:16px;padding:16px;border:1px solid var(--border)}
+.sc-label{font-size:12px;font-weight:600;color:var(--sub);margin-bottom:8px} .sc-val{font-size:26px;font-weight:800;letter-spacing:-1px}
+.prod-rank{background:white;margin:0 16px 8px;border-radius:14px;border:1px solid var(--border);padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.pr-name{font-size:14px;font-weight:700} .pr-qty{font-size:12px;color:var(--sub);margin-top:2px} .pr-rev{font-size:15px;font-weight:800;color:var(--green)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex;animation:fi 0.2s}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.sheet{background:white;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;padding:0 0 40px;animation:su 0.3s cubic-bezier(0.32,0.72,0,1);overscroll-behavior:contain}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sh-handle{width:36px;height:4px;background:var(--border-s);border-radius:2px;margin:14px auto 0}
+.sh-title{font-size:20px;font-weight:800;letter-spacing:-0.5px;padding:20px 20px 20px}
+.fg{padding:0 20px 14px} .fg label{font-size:13px;font-weight:700;color:var(--sub);margin-bottom:7px;display:block}
+.fg label .opt{font-weight:400;color:var(--muted)} .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-sheet-save{width:calc(100% - 40px);margin:4px 20px 0;padding:15px;border-radius:14px;border:none;background:var(--text);color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-sheet-del{width:calc(100% - 40px);margin:10px 20px 0;padding:13px;border-radius:14px;border:1.5px solid var(--danger);background:white;color:var(--danger);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.toggle-label{font-size:15px;font-weight:600} .toggle-sub{font-size:13px;color:var(--sub);margin-top:2px}
+.toggle{width:48px;height:28px;border-radius:14px;background:var(--border-s);border:none;cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle.on{background:var(--danger)}
+.toggle::after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:white;top:3px;left:3px;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.15)}
+.toggle.on::after{transform:translateX(20px)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(17,24,39,0.9);color:white;padding:12px 20px;border-radius:24px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.pb{height:32px} .hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-page">
+    <div class="login-logo">신진평<span>장터</span>과일</div>
+    <div class="login-sub">관리자 페이지</div>
+    <label style="font-size:13px;font-weight:700;color:var(--sub);margin-bottom:8px;display:block">비밀번호</label>
+    <input class="inp" type="password" id="pwInp" placeholder="비밀번호 입력" style="margin-bottom:12px" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-main" onclick="doLogin()">로그인</button>
+    <p class="hint">기본 비밀번호: 1234</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appPage" class="hidden">
+  <header class="hd">
+    <div class="hd-logo">신진평<span>장터</span>과일 <span style="font-size:11px;color:var(--muted);font-weight:500">관리자</span></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="hd-date" id="todayLabel"></span>
+      <button class="btn-logout" onclick="doLogout()">로그아웃</button>
+    </div>
+  </header>
+  <div class="tabs">
+    <button class="tab on" id="t1" onclick="goTab(1)">주문</button>
+    <button class="tab"    id="t2" onclick="goTab(2)">상품관리</button>
+    <button class="tab"    id="t3" onclick="goTab(3)">통계</button>
+  </div>
+
+  <!-- 주문 탭 -->
+  <div class="page on" id="p1">
+    <div class="stat-strip" id="quickStat"></div>
+    <div class="filter-row" id="orderDateFilter"></div>
+    <div class="filter-row" style="padding-top:0;border-top:none">
+      <button class="pill on" id="fa" onclick="setStatusF('all')">전체</button>
+      <button class="pill"    id="fp" onclick="setStatusF('pending')">접수대기</button>
+      <button class="pill"    id="fd" onclick="setStatusF('done')">완료</button>
+      <button class="pill"    id="fc" onclick="setStatusF('cancelled')">취소</button>
+    </div>
+    <div class="search-row">
+      <input class="search-inp" id="searchQ" placeholder="이름·전화번호 검색" oninput="renderOrders()">
+    </div>
+    <div id="orderList"></div>
+    <div class="pb"></div>
+  </div>
+
+  <!-- 상품관리 탭 -->
+  <div class="page" id="p2">
+    <div class="today-banner">
+      <div class="tb-header">
+        <div class="tb-title">오늘 공구 현황</div>
+        <div class="tb-date" id="tbDate"></div>
+      </div>
+      <div class="tb-stats" id="tbStats"></div>
+    </div>
+    <div class="date-tabs" id="prodDateTabs"></div>
+    <div class="sec-hd">
+      <div class="sec-title" id="prodSecTitle">상품 목록</div>
+      <button class="btn-add" onclick="openAddSheet()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        상품 추가
+      </button>
+    </div>
+    <div style="display:flex;gap:8px;padding:0 16px 12px">
+      <button style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border-s);background:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--sub)" onclick="openNewDateSheet()">+ 새 날짜 공구 열기</button>
+      <button style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border-s);background:white;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--sub)" onclick="openCopySheet()">오늘 목록 복사하기</button>
+    </div>
+    <div id="prodList"></div>
+    <div class="pb"></div>
+  </div>
+
+  <!-- 통계 탭 -->
+  <div class="page" id="p3">
+    <div class="stats-grid" id="fullStats"></div>
+    <div class="sec-hd"><div class="sec-title">상품별 주문 순위</div></div>
+    <div id="prodRank"></div>
+    <div class="pb"></div>
+  </div>
+</div>
+
+<!-- 상품 추가/수정 시트 -->
+<div class="overlay" id="sheetProd" onclick="if(event.target===this)closeSheet('sheetProd')">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-title" id="sheetProdTitle">상품 추가</div>
+    <div class="toggle-row" id="soldOutRow" style="display:none">
+      <div>
+        <div class="toggle-label">품절 처리</div>
+        <div class="toggle-sub">켜면 고객에게 품절로 표시돼요</div>
+      </div>
+      <button class="toggle" id="soldOutToggle" onclick="flipSoldOut()"></button>
+    </div>
+    <div style="height:16px"></div>
+    <div class="fg"><label>상품명</label><input class="inp" id="ep_name" placeholder="예) 딸기 설향"></div>
+    <div class="fg">
+      <div class="row2">
+        <div><label>카테고리</label>
+          <select class="inp" id="ep_cat">
+            <option>채소</option><option>국내산 과일</option><option>수입 과일</option>
+            <option>견과·특산</option><option>컵과일·달걀</option><option>수산물</option><option>기타</option>
+          </select>
+        </div>
+        <div><label>공구 날짜</label><input class="inp" id="ep_date" type="date"></div>
+      </div>
+    </div>
+    <div class="fg"><label>설명 <span class="opt">선택</span></label><input class="inp" id="ep_desc" placeholder="예) 500g · 국내산"></div>
+    <div class="fg">
+      <div class="row2">
+        <div><label>판매 가격 (원)</label><input class="inp" id="ep_price" type="number" placeholder="7000"></div>
+        <div><label>판매 단위</label><input class="inp" id="ep_unit" placeholder="예) 1팩"></div>
+      </div>
+    </div>
+    <div class="fg">
+      <div class="row2">
+        <div><label>재고 수량</label><input class="inp" id="ep_stock" type="number" placeholder="99"></div>
+        <div><label>인기 상품</label>
+          <select class="inp" id="ep_hot">
+            <option value="false">일반</option><option value="true">인기 표시</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="btn-sheet-save" onclick="saveProd()">저장하기</button>
+    <button class="btn-sheet-del hidden" id="btnDelProd" onclick="delProd()">이 상품 삭제</button>
+    <div style="height:8px"></div>
+  </div>
+</div>
+
+<!-- 새 날짜 공구 열기 시트 -->
+<div class="overlay" id="sheetNewDate" onclick="if(event.target===this)closeSheet('sheetNewDate')">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-title">새 날짜 공구 열기</div>
+    <div style="padding:0 20px 20px;font-size:14px;color:var(--sub);line-height:1.7">
+      날짜를 선택하면 해당 날짜 탭이 열려요.<br>
+      그 다음 <strong style="color:var(--text)">① 상품 추가</strong> 버튼으로 품목을 하나씩 등록하거나,<br>
+      <strong style="color:var(--text)">② 오늘 목록 복사하기</strong>로 기존 상품을 한 번에 가져오세요.
+    </div>
+    <div class="fg"><label>공구 날짜 선택</label><input class="inp" id="newDateInput" type="date"></div>
+    <button class="btn-sheet-save" onclick="confirmNewDate()">이 날짜로 공구 열기</button>
+    <div style="height:12px"></div>
+  </div>
+</div>
+
+<!-- 목록 복사 시트 -->
+<div class="overlay" id="sheetCopy" onclick="if(event.target===this)closeSheet('sheetCopy')">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-title">목록 복사하기</div>
+    <div style="padding:0 20px 16px;font-size:14px;color:var(--sub);line-height:1.6">
+      기존 날짜 상품을 새 날짜로 복사해요.<br>재고는 99개로 초기화, 품절은 해제돼요.
+    </div>
+    <div class="fg"><label>복사할 원본 날짜</label><select class="inp" id="copyFrom"></select></div>
+    <div class="fg"><label>복사할 목표 날짜</label><input class="inp" id="copyTo" type="date"></div>
+    <button class="btn-sheet-save" onclick="doCopy()">복사하기</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/*
+ * ★★★ ID 타입 통일 원칙 ★★★
+ * - 모든 상품 ID는 처음 생성부터 저장, 읽기, 비교, 삭제까지 "문자열"만 사용
+ * - 스토리지 키를 sjpk4_* 로 변경해 이전 숫자ID 데이터와 완전 단절
+ */
+const PK = 'sjpk4_products';
+const OK = 'sjpk4_orders';
+
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T00:00:00');
+  return `${dt.getMonth()+1}월 ${dt.getDate()}일 (${['일','월','화','수','목','금','토'][dt.getDay()]})`;
+}
+/* 고유 문자열 ID 생성 */
+function uid() { return String(Date.now()) + String(Math.floor(Math.random()*9999)).padStart(4,'0'); }
+
+const CATALOG = [
+  {cat:'채소',name:'국산 양송이버섯',desc:'200g',price:1900,unit:'1봉'},
+  {cat:'채소',name:'금산 봉지 깻잎 30장',desc:'1봉 세트',price:900,unit:'1봉'},
+  {cat:'채소',name:'알배기 쌈배추',desc:'500g급',price:1400,unit:'1봉'},
+  {cat:'채소',name:'싱싱 국산 브로콜리',desc:'250g 내외',price:1900,unit:'1개'},
+  {cat:'채소',name:'농협 싱싱 시금치',desc:'300g',price:1900,unit:'1봉'},
+  {cat:'채소',name:'국산 농협 간마늘',desc:'200g 통포장',price:2900,unit:'1봉'},
+  {cat:'채소',name:'국산 양배추 큰 1통',desc:'',price:4000,unit:'1통'},
+  {cat:'국내산 과일',name:'딸기 설향 왕특 다라딸기',desc:'500g · 1번 등급',price:7900,unit:'1팩'},
+  {cat:'국내산 과일',name:'일품 장희 딸기',desc:'500g · 3×5사이즈',price:4900,unit:'1팩'},
+  {cat:'국내산 과일',name:'산청 설향 딸기',desc:'500g',price:4900,unit:'1팩'},
+  {cat:'국내산 과일',name:'맛도리 제주 천혜향',desc:'6개',price:10000,unit:'6개'},
+  {cat:'국내산 과일',name:'천혜향 박스',desc:'3kg · 14브릭스',price:19000,unit:'1박스'},
+  {cat:'국내산 과일',name:'특상 상주 곶감',desc:'700g 내외',price:14000,unit:'1봉'},
+  {cat:'국내산 과일',name:'참다래 제주 그린키위',desc:'8개 1봉',price:10000,unit:'1봉'},
+  {cat:'국내산 과일',name:'안동 부사 컨티사과',desc:'5개 1봉',price:8900,unit:'1봉'},
+  {cat:'국내산 과일',name:'비가림 하우스 감귤',desc:'1kg 1봉',price:5900,unit:'1봉'},
+  {cat:'국내산 과일',name:'비가림 하우스 감귤 박스',desc:'M사이즈 5kg',price:27000,unit:'1박스'},
+  {cat:'국내산 과일',name:'운두령 찰토마토',desc:'1kg 1봉',price:5900,unit:'1봉'},
+  {cat:'국내산 과일',name:'알큰 대추 방울토마토',desc:'750g',price:6000,unit:'1팩'},
+  {cat:'수입 과일',name:'스위트 큰 바나나',desc:'1송이',price:3900,unit:'1송이'},
+  {cat:'수입 과일',name:'알큰 칠레 블루베리',desc:'125g 1팩',price:3900,unit:'1팩'},
+  {cat:'견과·특산',name:'꿀밤 생율밤',desc:'400g',price:6900,unit:'1봉'},
+  {cat:'견과·특산',name:'햇 피호두 껍질호두',desc:'500g',price:4900,unit:'1봉'},
+  {cat:'견과·특산',name:'볶음 껍질 피땅콩',desc:'500g',price:3900,unit:'1봉'},
+  {cat:'컵과일·달걀',name:'컵과일 8온즈',desc:'제철과일 6-7가지',price:4500,unit:'1컵'},
+  {cat:'컵과일·달걀',name:'유정란 달걀',desc:'난각1번 중란 30구',price:13000,unit:'1판'},
+  {cat:'수산물',name:'안동 간고등어',desc:'2미',price:5000,unit:'2미'},
+  {cat:'수산물',name:'안동 순살간고등어필렛',desc:'5조각',price:8000,unit:'1줄'},
+  {cat:'수산물',name:'베트남 칵테일새우',desc:'900g',price:19000,unit:'1팩'},
+];
+
+/* ── 데이터 접근 ── */
+function getProds() {
+  const s = localStorage.getItem(PK);
+  if (!s) {
+    const init = CATALOG.map((p,i) => ({...p, id:uid(), stock:99, soldOut:false, hot:false, date:today()}));
+    localStorage.setItem(PK, JSON.stringify(init));
+    return init;
+  }
+  /* 읽을 때 id를 문자열로 강제 변환 */
+  return JSON.parse(s).map(p => ({...p, id:String(p.id)}));
+}
+function setProds(arr) {
+  /* 쓸 때도 id를 문자열로 정규화 */
+  localStorage.setItem(PK, JSON.stringify(arr.map(p => ({...p, id:String(p.id)}))));
+}
+function getOrds() { const s=localStorage.getItem(OK); return s?JSON.parse(s):[]; }
+function setOrds(arr) { localStorage.setItem(OK, JSON.stringify(arr)); }
+
+/* ── 상태 ── */
+let curTab=1, orderDateF='all', statusF='all', prodDate=today();
+let editId=null;   /* 항상 문자열 또는 null */
+let sSoldOut=false;
+
+/* ── 로그인 ── */
+function doLogin() {
+  const pw = localStorage.getItem('sjpk4_pw')||'1234';
+  if (document.getElementById('pwInp').value===pw) {
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('appPage').classList.remove('hidden');
+    initApp();
+  } else { showToast('비밀번호가 틀렸어요'); document.getElementById('pwInp').value=''; }
+}
+function doLogout() {
+  document.getElementById('loginPage').style.display='';
+  document.getElementById('appPage').classList.add('hidden');
+  document.getElementById('pwInp').value='';
+}
+function initApp() {
+  const d=new Date(), w=['일','월','화','수','목','금','토'];
+  document.getElementById('todayLabel').textContent=`${d.getMonth()+1}/${d.getDate()} (${w[d.getDay()]})`;
+  document.getElementById('tbDate').textContent=fmtDate(today());
+  const tom=new Date(); tom.setDate(tom.getDate()+1);
+  document.getElementById('newDateInput').value=tom.toISOString().split('T')[0];
+  renderAll();
+}
+
+/* ── 탭 ── */
+function goTab(n) {
+  curTab=n;
+  [1,2,3].forEach(i=>{
+    document.getElementById(`t${i}`).classList.toggle('on',i===n);
+    document.getElementById(`p${i}`).classList.toggle('on',i===n);
+  });
+  renderAll();
+}
+
+function renderAll() {
+  renderStat(); renderOrderDateFilter(); renderOrders();
+  renderBanner(); renderDateTabs(); renderProds(); renderStats();
+}
+
+/* ── 상단 통계 ── */
+function renderStat() {
+  const o=getOrds();
+  const todayO=o.filter(x=>x.date===today());
+  const pend=o.filter(x=>x.status==='pending').length;
+  const done=o.filter(x=>x.status==='done').length;
+  const rev=o.filter(x=>x.status!=='cancelled').reduce((a,x)=>a+x.total,0);
+  document.getElementById('quickStat').innerHTML=`
+    <div class="stat-cell"><div class="v v-green">${todayO.length}</div><div class="l">오늘주문</div></div>
+    <div class="stat-cell"><div class="v v-blue">${pend}</div><div class="l">접수대기</div></div>
+    <div class="stat-cell"><div class="v v-green">${done}</div><div class="l">완료</div></div>
+    <div class="stat-cell"><div class="v" style="font-size:16px">${(rev/10000).toFixed(1)}만</div><div class="l">누적매출</div></div>`;
+}
+
+/* ── 날짜 필터 ── */
+function renderOrderDateFilter() {
+  const dates=[...new Set(getOrds().map(o=>o.date))].sort().reverse();
+  const pills=[{v:'all',l:'전체'},{v:today(),l:'오늘'}];
+  dates.forEach(d=>{if(!pills.find(p=>p.v===d)){const[,m,dy]=d.split('-');pills.push({v:d,l:`${+m}/${+dy}`});}});
+  document.getElementById('orderDateFilter').innerHTML=pills.map(p=>
+    `<button class="pill ${orderDateF===p.v?'on':''}" onclick="pickODate('${p.v}')">${p.l}</button>`
+  ).join('');
+}
+function pickODate(v){orderDateF=v;renderOrderDateFilter();renderOrders();}
+function setStatusF(s){
+  statusF=s;
+  const m={all:'fa',pending:'fp',done:'fd',cancelled:'fc'};
+  Object.entries(m).forEach(([k,id])=>document.getElementById(id)?.classList.toggle('on',k===s));
+  renderOrders();
+}
+
+/* ── 주문 목록 ── */
+function renderOrders() {
+  let ords=getOrds();
+  if(orderDateF!=='all') ords=ords.filter(o=>o.date===orderDateF);
+  if(statusF!=='all')    ords=ords.filter(o=>o.status===statusF);
+  const q=document.getElementById('searchQ')?.value?.trim().toLowerCase();
+  if(q) ords=ords.filter(o=>o.name?.toLowerCase().includes(q)||o.phone?.includes(q));
+  ords=[...ords].reverse();
+  const el=document.getElementById('orderList');
+  if(!ords.length){el.innerHTML=`<div class="empty"><div class="et">주문이 없어요</div><div class="es">필터를 변경해보세요</div></div>`;return;}
+  const pbc={'카드결제':'b-card','계좌이체':'b-transfer','매장픽업':'b-pickup'};
+  el.innerHTML=ords.map(o=>{
+    const d=new Date(o.createdAt);
+    const ts=`${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const items=(o.items||[]).map(i=>`${i.name} × ${Number(i.qty)} ${i.unit}`).join(', ');
+    const sb={pending:`<span class="badge b-pending">접수대기</span>`,done:`<span class="badge b-done">완료</span>`,cancelled:`<span class="badge b-cancel">취소</span>`}[o.status]||'';
+    const pb=o.payMethod?`<span class="badge ${pbc[o.payMethod]||'b-card'}">${o.payMethod}</span>`:'';
+    return `<div class="order-card" style="${o.status==='cancelled'?'opacity:0.5':''}">
+      <div class="oc-top">
+        <div><div class="oc-name">${o.name}</div><div class="oc-phone">${o.phone}</div>${o.addr?`<div class="oc-addr">${o.addr}</div>`:''}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">${sb}${pb}</div>
+      </div>
+      <div class="oc-body">
+        <div class="oc-items">${items}${o.note?`<br>메모: ${o.note}`:''}</div>
+        <div class="oc-foot"><div class="oc-total">${o.total.toLocaleString()}원</div><div class="oc-meta">${ts}<br>${o.id}</div></div>
+      </div>
+      ${o.status==='pending'?`<div class="oc-actions">
+        <button class="act-btn act-done" onclick="updOrd('${o.id}','done')">완료 처리</button>
+        <button class="act-btn act-cancel" onclick="updOrd('${o.id}','cancelled')">취소</button>
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+function updOrd(id,status){
+  setOrds(getOrds().map(o=>o.id===id?{...o,status}:o));
+  renderOrders();renderStat();
+  showToast(status==='done'?'완료 처리했어요':'취소 처리했어요');
+}
+
+/* ── 오늘 현황 배너 ── */
+function renderBanner(){
+  const p=getProds().filter(x=>x.date===today());
+  const av=p.filter(x=>!x.soldOut).length, out=p.filter(x=>x.soldOut).length;
+  const tO=getOrds().filter(o=>o.date===today());
+  document.getElementById('tbStats').innerHTML=`
+    <div class="tb-stat"><div class="n v-green">${av}</div><div class="l">판매중</div></div>
+    <div class="tb-stat"><div class="n" style="color:var(--danger)">${out}</div><div class="l">품절</div></div>
+    <div class="tb-stat"><div class="n v-blue">${tO.length}</div><div class="l">오늘주문</div></div>`;
+}
+
+/* ── 상품 날짜 탭 ── */
+function renderDateTabs(){
+  const dates=[...new Set(getProds().map(p=>p.date))].sort().reverse();
+  if(dates.length&&!dates.includes(prodDate)) prodDate=dates[0];
+  document.getElementById('prodDateTabs').innerHTML=dates.map(d=>{
+    const cnt=getProds().filter(p=>p.date===d&&!p.soldOut).length;
+    return `<button class="dt ${d===prodDate?'on':''}" onclick="pickPDate('${d}')">
+      ${d===today()?'오늘 ':''}${fmtDate(d)}<span class="cnt">${cnt}종 판매중</span></button>`;
+  }).join('');
+  document.getElementById('prodSecTitle').textContent=prodDate===today()?'오늘 공구 상품':`${fmtDate(prodDate)} 상품`;
+}
+function pickPDate(d){prodDate=d;renderDateTabs();renderProds();}
+
+/* ── 상품 목록 ── */
+function renderProds(){
+  const ps=getProds().filter(p=>p.date===prodDate);
+  const el=document.getElementById('prodList');
+  if(!ps.length){
+    el.innerHTML=`<div class="empty">
+      <div class="et">등록된 상품이 없어요</div>
+      <div class="es">오른쪽 위 <strong>상품 추가</strong> 버튼으로 품목을 등록하거나<br>아래 <strong>오늘 목록 복사하기</strong>를 이용하세요</div>
+    </div>`;return;
+  }
+  const grp={};
+  ps.forEach(p=>{if(!grp[p.cat])grp[p.cat]=[];grp[p.cat].push(p);});
+  el.innerHTML=Object.entries(grp).map(([cat,items])=>`
+    <div style="margin-bottom:4px">
+      <div style="padding:16px 16px 6px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.5px">${cat}</div>
+      ${items.map(p=>{
+        const sc=p.soldOut?'s-out':p.stock<=5?'s-low':'s-ok';
+        const st=p.soldOut?'품절':p.stock<=5?`잔여 ${p.stock}개`:`재고 ${p.stock}개`;
+        return `<div class="prod-item${p.soldOut?' sold-out':''}">
+          <div class="prod-item-inner">
+            <div class="pi-info">
+              <div class="pi-name">${p.name}</div>
+              <div class="pi-meta">${p.price.toLocaleString()}원 / ${p.unit}${p.desc?' · '+p.desc:''}</div>
+              <div class="pi-stock-row">
+                <span class="pi-stock ${sc}">${st}</span>
+                ${p.hot?'<span class="pi-stock" style="background:#FEF3C7;color:#B45309">인기</span>':''}
+              </div>
+            </div>
+            <div class="quick-stock">
+              <button class="qs-btn" onclick="adjStock('${p.id}',-1)">−</button>
+              <input class="qs-val" type="number" value="${p.stock}" onchange="setStock('${p.id}',this.value)" onfocus="this.select()">
+              <button class="qs-btn" onclick="adjStock('${p.id}',1)">+</button>
+            </div>
+          </div>
+          <div class="prod-actions">
+            <button class="pa-btn ${p.soldOut?'green':'red'}" onclick="qToggleSO('${p.id}')">${p.soldOut?'판매 재개':'품절 처리'}</button>
+            <button class="pa-btn" onclick="openEdit('${p.id}')">수정</button>
+            <button class="pa-btn red" onclick="qDel('${p.id}')">삭제</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+}
+
+/* ── 재고 조정 ── */
+function adjStock(id,delta){
+  /* id는 문자열, getProds()도 문자열 반환 → === 정상 동작 */
+  setProds(getProds().map(p=>p.id===id?{...p,stock:Math.max(0,(p.stock||0)+delta)}:p));
+  renderProds();renderBanner();
+}
+function setStock(id,val){
+  setProds(getProds().map(p=>p.id===id?{...p,stock:Math.max(0,parseInt(val)||0)}:p));
+  renderProds();renderBanner();
+}
+
+/* ── 빠른 품절 ── */
+function qToggleSO(id){
+  const updated=getProds().map(p=>p.id===id?{...p,soldOut:!p.soldOut}:p);
+  setProds(updated);renderProds();renderBanner();
+  showToast(updated.find(p=>p.id===id)?.soldOut?'품절 처리했어요':'판매 재개했어요');
+}
+
+/* ── 빠른 삭제 ── */
+function qDel(id){
+  if(!confirm('이 상품을 삭제할까요?'))return;
+  setProds(getProds().filter(p=>p.id!==id));  /* id(문자열) !== id(문자열) */
+  renderProds();renderDateTabs();renderBanner();
+  showToast('삭제했어요');
+}
+
+/* ── 상품 추가 시트 ── */
+function openAddSheet(){
+  editId=null; sSoldOut=false;
+  document.getElementById('sheetProdTitle').textContent='상품 추가';
+  document.getElementById('soldOutRow').style.display='none';
+  document.getElementById('btnDelProd').classList.add('hidden');
+  document.getElementById('soldOutToggle').classList.remove('on');
+  ['ep_name','ep_desc','ep_price','ep_unit'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ep_cat').value='채소';
+  document.getElementById('ep_stock').value='99';
+  document.getElementById('ep_date').value=prodDate;
+  document.getElementById('ep_hot').value='false';
+  openSheet('sheetProd');
+}
+
+/* ── 상품 수정 시트 ── */
+function openEdit(id){
+  const p=getProds().find(x=>x.id===id);  /* id(문자열) === x.id(문자열) */
+  if(!p){showToast('상품을 찾을 수 없어요');return;}
+  editId=id;  /* 문자열 보존 */
+  sSoldOut=!!p.soldOut;
+  document.getElementById('sheetProdTitle').textContent='상품 수정';
+  document.getElementById('soldOutRow').style.display='flex';
+  document.getElementById('btnDelProd').classList.remove('hidden');
+  document.getElementById('soldOutToggle').classList.toggle('on',sSoldOut);
+  document.getElementById('ep_name').value=p.name;
+  document.getElementById('ep_cat').value=p.cat;
+  document.getElementById('ep_desc').value=p.desc||'';
+  document.getElementById('ep_price').value=p.price;
+  document.getElementById('ep_unit').value=p.unit;
+  document.getElementById('ep_stock').value=p.stock;
+  document.getElementById('ep_date').value=p.date;
+  document.getElementById('ep_hot').value=String(p.hot);
+  openSheet('sheetProd');
+}
+function flipSoldOut(){sSoldOut=!sSoldOut;document.getElementById('soldOutToggle').classList.toggle('on',sSoldOut);}
+
+/* ── 저장 ── */
+function saveProd(){
+  const name=document.getElementById('ep_name').value.trim();
+  const price=parseInt(document.getElementById('ep_price').value);
+  if(!name||!price){showToast('상품명과 가격을 입력해주세요');return;}
+  const data={
+    name,price,
+    cat:document.getElementById('ep_cat').value,
+    desc:document.getElementById('ep_desc').value.trim(),
+    unit:document.getElementById('ep_unit').value.trim()||'개',
+    stock:parseInt(document.getElementById('ep_stock').value)||0,
+    date:document.getElementById('ep_date').value||today(),
+    hot:document.getElementById('ep_hot').value==='true',
+    soldOut:sSoldOut,
+  };
+  const ps=getProds();
+  if(editId){
+    const idx=ps.findIndex(p=>p.id===editId);  /* 문자열 === 문자열 */
+    if(idx===-1){showToast('수정할 상품을 찾을 수 없어요');return;}
+    ps[idx]={...ps[idx],...data};
+    showToast('수정했어요');
+  } else {
+    data.id=uid();  /* 새 문자열 ID */
+    ps.push(data);
+    showToast('상품을 추가했어요');
+  }
+  setProds(ps);
+  closeSheet('sheetProd');
+  renderProds();renderDateTabs();renderBanner();
+}
+
+/* ── 시트에서 삭제 ── */
+function delProd(){
+  if(!editId)return;
+  if(!confirm('정말 삭제할까요?'))return;
+  setProds(getProds().filter(p=>p.id!==editId));  /* 문자열 !== 문자열 */
+  closeSheet('sheetProd');
+  editId=null;
+  renderProds();renderDateTabs();renderBanner();
+  showToast('삭제했어요');
+}
+
+/* ── 새 날짜 공구 열기 ── */
+function openNewDateSheet(){
+  const tom=new Date();tom.setDate(tom.getDate()+1);
+  document.getElementById('newDateInput').value=tom.toISOString().split('T')[0];
+  openSheet('sheetNewDate');
+}
+function confirmNewDate(){
+  const d=document.getElementById('newDateInput').value;
+  if(!d){showToast('날짜를 선택해주세요');return;}
+  prodDate=d;
+  closeSheet('sheetNewDate');
+  renderDateTabs();renderProds();
+  const cnt=getProds().filter(p=>p.date===d).length;
+  if(cnt===0) showToast(`${fmtDate(d)} 탭 열림 → 상품 추가 버튼으로 등록하세요`);
+  else showToast(`${fmtDate(d)} 공구로 이동 (기존 ${cnt}개 상품)`);
+}
+
+/* ── 목록 복사 ── */
+function openCopySheet(){
+  const dates=[...new Set(getProds().map(p=>p.date))].sort().reverse();
+  if(!dates.length){showToast('복사할 상품 목록이 없어요');return;}
+  document.getElementById('copyFrom').innerHTML=dates.map(d=>`<option value="${d}">${fmtDate(d)}</option>`).join('');
+  const tom=new Date();tom.setDate(tom.getDate()+1);
+  document.getElementById('copyTo').value=tom.toISOString().split('T')[0];
+  openSheet('sheetCopy');
+}
+function doCopy(){
+  const from=document.getElementById('copyFrom').value;
+  const to=document.getElementById('copyTo').value;
+  if(!to){showToast('목표 날짜를 선택해주세요');return;}
+  if(from===to){showToast('다른 날짜를 선택해주세요');return;}
+  const ps=getProds();
+  const src=ps.filter(p=>p.date===from);
+  if(!src.length){showToast('복사할 상품이 없어요');return;}
+  const already=ps.some(p=>p.date===to);
+  if(already&&!confirm(`${fmtDate(to)}에 이미 상품이 있어요. 추가로 복사할까요?`))return;
+  /* ★ uid()로 완전히 새로운 문자열 ID 생성 */
+  const copies=src.map(p=>({...p,id:uid(),date:to,soldOut:false,stock:99}));
+  setProds([...ps,...copies]);
+  prodDate=to;
+  closeSheet('sheetCopy');
+  renderAll();
+  showToast(`${src.length}개 상품을 ${fmtDate(to)}로 복사했어요`);
+}
+
+/* ── 통계 ── */
+function renderStats(){
+  const ords=getOrds().filter(o=>o.status!=='cancelled');
+  const tot=ords.length, rev=ords.reduce((a,o)=>a+o.total,0);
+  const cust=new Set(ords.map(o=>o.phone)).size, avg=tot?Math.round(rev/tot):0;
+  document.getElementById('fullStats').innerHTML=`
+    <div class="stat-card"><div class="sc-label">총 주문 건수</div><div class="sc-val v-green">${tot}</div></div>
+    <div class="stat-card"><div class="sc-label">총 매출액</div><div class="sc-val" style="font-size:18px">${rev.toLocaleString()}원</div></div>
+    <div class="stat-card"><div class="sc-label">고객 수</div><div class="sc-val v-blue">${cust}</div></div>
+    <div class="stat-card"><div class="sc-label">평균 주문액</div><div class="sc-val" style="font-size:18px">${avg.toLocaleString()}원</div></div>`;
+  const map={};
+  ords.forEach(o=>(o.items||[]).forEach(i=>{
+    if(!map[i.name])map[i.name]={qty:0,rev:0};
+    map[i.name].qty+=Number(i.qty);
+    map[i.name].rev+=i.sub||(i.price*Number(i.qty));
+  }));
+  const sorted=Object.entries(map).sort((a,b)=>b[1].qty-a[1].qty);
+  document.getElementById('prodRank').innerHTML=sorted.length
+    ?sorted.map(([n,d],i)=>`<div class="prod-rank">
+        <div><div class="pr-name">${i+1}. ${n}</div><div class="pr-qty">${d.qty}개 주문</div></div>
+        <div class="pr-rev">${d.rev.toLocaleString()}원</div></div>`).join('')
+    :`<div class="empty"><div class="et">데이터 없음</div></div>`;
+}
+
+/* ── 시트 / 토스트 ── */
+function openSheet(id){document.getElementById(id).classList.add('open');}
+function closeSheet(id){document.getElementById(id).classList.remove('open');}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
