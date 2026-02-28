@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>신진평장터과일</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --g:#22C55E;--gb:#F0FDF4;
+  --t:#111827;--s:#6B7280;--m:#9CA3AF;
+  --bg:#F9FAFB;--bd:#F3F4F6;--bs:#E5E7EB;--r:#EF4444;
+}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--t);min-height:100vh;max-width:430px;margin:0 auto;-webkit-font-smoothing:antialiased}
+.hd{background:#fff;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--bd)}
+.logo{font-size:17px;font-weight:800}.logo span{color:var(--g)}
+.hdr{display:flex;gap:4px}
+.ic{width:36px;height:36px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.bt{font-size:14px;font-weight:600;color:var(--s);background:none;border:none;cursor:pointer;font-family:inherit;padding:8px 0 8px 8px}
+.dscroll{background:#fff;border-bottom:1px solid var(--bd);overflow-x:auto;display:flex;padding:0 16px;scrollbar-width:none}
+.dscroll::-webkit-scrollbar{display:none}
+.dtab{flex-shrink:0;padding:14px 16px 12px;font-size:14px;font-weight:600;color:var(--m);cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;font-family:inherit;white-space:nowrap}
+.dtab.on{color:var(--t);border-bottom-color:var(--t)}
+.dtab .sub{font-size:11px;color:var(--g);font-weight:600;display:block;margin-top:1px}
+.ev{padding:20px 20px 0}
+.evt{font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1.3}
+.evm{font-size:14px;color:var(--s);margin-top:6px}
+.chips{overflow-x:auto;display:flex;gap:8px;padding:16px 20px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:7px 14px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--bs);background:#fff;color:var(--s);font-family:inherit}
+.chip.on{background:var(--t);border-color:var(--t);color:#fff}
+.cathd{padding:20px 20px 10px;font-size:12px;font-weight:700;color:var(--m);letter-spacing:.5px}
+.pd{background:#fff;padding:16px 20px;display:flex;align-items:center;border-bottom:1px solid var(--bd)}
+.pd:active{background:var(--bg)}.pd.sold{opacity:.4;pointer-events:none}
+.pdi{flex:1;min-width:0;padding-right:16px}
+.pdn{font-size:15px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px}
+.pdd{font-size:13px;color:var(--s);line-height:1.4;margin-bottom:6px}
+.pdp{font-size:16px;font-weight:800}
+.pdp .sl{color:var(--m);font-weight:400;font-size:13px;margin-left:2px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-bottom:5px}
+.th{background:#FEF3C7;color:#B45309}.to{background:var(--bg);color:var(--m)}
+.stlow{font-size:12px;color:var(--r);font-weight:600;margin-top:4px}
+.qc{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.qb{width:30px;height:30px;border-radius:50%;border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.qb.mi{background:var(--bg);color:var(--s)}.qb.mi:active{background:var(--bs)}
+.qb.pl{background:var(--g);color:#fff}.qb.pl:active{background:#16A34A}
+.qb:disabled{opacity:.25;cursor:default}
+.qn{font-size:16px;font-weight:700;min-width:20px;text-align:center}
+.sdiv{height:8px;background:var(--bg);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.cart{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--bd);z-index:100}
+.bord{width:100%;padding:16px;border-radius:14px;border:none;background:var(--g);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+.bord:disabled{background:var(--bs);color:var(--m);cursor:default}
+.bord:not(:disabled):active{background:#16A34A}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center}
+.ov.open{display:flex;animation:fi .2s}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.sh{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:90vh;overflow-y:auto;padding:0 0 calc(32px + env(safe-area-inset-bottom));animation:su .3s cubic-bezier(.32,.72,0,1);overscroll-behavior:contain}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.shh{width:36px;height:4px;background:var(--bs);border-radius:2px;margin:14px auto 0}
+.sht{font-size:20px;font-weight:800;padding:20px 20px 4px}
+.shs{font-size:14px;color:var(--s);padding:0 20px 20px}
+.ob{margin:0 20px 20px;background:var(--bg);border-radius:14px;padding:16px}
+.or{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;font-size:14px}
+.or .nm{color:var(--s);font-weight:500;flex:1;margin-right:12px}.or .am{font-weight:700;white-space:nowrap}
+.or.tot{border-top:1px solid var(--bs);margin-top:8px;padding-top:12px;font-size:16px;font-weight:800}
+.or.tot .am{color:var(--g)}
+.fg{padding:0 20px 14px}.fg label{font-size:13px;font-weight:700;color:var(--s);margin-bottom:8px;display:block}
+.fg .op{font-weight:400;color:var(--m)}
+.inp{width:100%;padding:14px 16px;border:1.5px solid var(--bs);border-radius:12px;font-size:15px;font-family:inherit;outline:none;color:var(--t);background:#fff;-webkit-appearance:none;transition:border-color .15s}
+.inp:focus{border-color:var(--t)}.inp.err{border-color:var(--r)}
+.ferr{font-size:12px;color:var(--r);margin-top:6px;display:none}.ferr.show{display:block}
+.po{display:flex;gap:8px}
+.po button{flex:1;padding:12px 8px;border-radius:12px;border:1.5px solid var(--bs);background:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--s)}
+.po button.on{border-color:var(--t);background:var(--t);color:#fff}
+.po button .pi2{font-size:18px;display:block;margin-bottom:4px}
+.prv{margin:0 20px 20px;padding:14px;background:var(--bg);border-radius:12px;font-size:12px;color:var(--s);line-height:1.7}
+.prv strong{display:block;font-size:13px;font-weight:700;color:var(--t);margin-bottom:6px}
+.cta{padding:0 20px}
+.bsub{width:100%;padding:16px;border-radius:14px;border:none;background:var(--g);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+.bsub:active{background:#16A34A}
+.sw{text-align:center;padding:48px 20px 32px}
+.sic{width:64px;height:64px;background:var(--gb);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.stt{font-size:22px;font-weight:800;margin-bottom:8px}.std{font-size:15px;color:var(--s);line-height:1.6}
+.onb{margin:24px 20px 0;background:var(--bg);border-radius:14px;padding:18px 20px}
+.onl{font-size:13px;color:var(--s);margin-bottom:4px}.onv{font-size:20px;font-weight:800}
+.kn{margin:12px 20px 0;background:#FEF9C3;border-radius:12px;padding:14px 16px;font-size:13px;color:#713F12;line-height:1.6;font-weight:500}
+.bcl{width:calc(100% - 40px);margin:20px 20px 0;padding:16px;border-radius:14px;border:1.5px solid var(--bs);background:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--t)}
+.moc{margin:0 20px 10px;padding:16px;border:1.5px solid var(--bs);border-radius:16px}
+.moc-tp{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.mocn{font-size:15px;font-weight:700}.mocd{font-size:12px;color:var(--m);margin-top:2px}
+.badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px}
+.bpp{background:#EFF6FF;color:#1D4ED8}.bdd{background:var(--gb);color:#15803D}
+.moci{font-size:13px;color:var(--s);line-height:1.7;margin-bottom:10px;border-top:1px solid var(--bd);padding-top:10px}
+.moct{font-size:15px;font-weight:800}
+.nores{text-align:center;padding:48px 20px;color:var(--m);font-size:14px}
+.sbar{display:flex;gap:8px;padding:16px 20px 8px}
+.sinp2{flex:1;padding:12px 14px;border:1.5px solid var(--bs);border-radius:12px;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none}
+.sinp2:focus{border-color:var(--t)}
+.sbtn{padding:12px 16px;background:var(--t);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.shi{display:flex;align-items:center;gap:16px;padding:16px 20px;cursor:pointer;border-bottom:1px solid var(--bd)}
+.shi:active{background:var(--bg)}.shi:last-child{border-bottom:none}
+.shic{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.iccp{background:var(--bg);border:1.5px solid var(--bs)}.icqr{background:#EFF6FF}
+.shl{font-size:15px;font-weight:700}.shd{font-size:13px;color:var(--s);margin-top:2px}
+.qrw{padding:20px;text-align:center}
+.qrw p{font-size:13px;color:var(--s);margin-top:12px;line-height:1.5}
+.qru{font-size:12px;color:var(--m);word-break:break-all;margin-top:8px;padding:10px;background:var(--bg);border-radius:8px}
+.loading{display:flex;align-items:center;justify-content:center;padding:60px 20px;flex-direction:column;gap:12px;color:var(--s)}
+.spin{width:32px;height:32px;border:3px solid var(--bd);border-top-color:var(--g);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:64px 24px}
+.empty .et{font-size:16px;font-weight:700;color:var(--s);margin-bottom:8px}
+.empty .es{font-size:14px;color:var(--m)}
+.pb{height:80px}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(8px);background:rgba(17,24,39,.9);color:#fff;padding:12px 20px;border-radius:24px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="logo">신진평<span>장터</span>과일</div>
+  <div class="hdr">
+    <button class="ic" id="btnShare">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    </button>
+    <button class="bt" id="btnMyOrders">주문내역</button>
+  </div>
+</header>
+
+<div class="dscroll" id="dateTabs"></div>
+<div class="ev"><div class="evt" id="evTitle">불러오는 중...</div><div class="evm" id="evMeta"></div></div>
+<div class="chips" id="chips"></div>
+<div id="prodList"><div class="loading"><div class="spin"></div><span>상품을 불러오는 중...</span></div></div>
+<div class="pb"></div>
+
+<div class="cart">
+  <button class="bord" id="btnOrder" disabled>상품을 선택해주세요</button>
+</div>
+
+<!-- 주문 시트 -->
+<div class="ov" id="shOrder">
+  <div class="sh">
+    <div class="shh"></div>
+    <div class="sht">주문 신청</div>
+    <div class="shs">정보를 입력하면 카톡으로 결제 링크를 보내드려요</div>
+    <div class="ob" id="ordSum"></div>
+    <div class="fg">
+      <label>이름</label>
+      <input class="inp" id="iNm" type="text" placeholder="이름 또는 닉네임">
+      <div class="ferr" id="eNm">이름을 입력해주세요</div>
+    </div>
+    <div class="fg">
+      <label>전화번호</label>
+      <input class="inp" id="iPh" type="tel" placeholder="010-0000-0000">
+      <div class="ferr" id="ePh">전화번호를 입력해주세요</div>
+    </div>
+    <div class="fg">
+      <label>주소 <span class="op">선택</span></label>
+      <input class="inp" id="iAd" type="text" placeholder="예) 래미안 101동 1001호">
+    </div>
+    <div class="fg">
+      <label>결제 수단</label>
+      <div class="po">
+        <button data-pay="카드결제" class="on"><span class="pi2">💳</span>카드결제</button>
+        <button data-pay="계좌이체"><span class="pi2">🏦</span>계좌이체</button>
+        <button data-pay="매장픽업"><span class="pi2">🛍</span>매장픽업</button>
+      </div>
+    </div>
+    <div class="fg">
+      <label>요청사항 <span class="op">선택</span></label>
+      <input class="inp" id="iNo" type="text" placeholder="배달 관련 요청사항">
+    </div>
+    <div class="prv">
+      <strong>개인정보 수집 및 이용 동의</strong>
+      수집 목적: 공동구매 주문 접수 및 결제 안내<br>수집 항목: 이름, 전화번호, 주소 / 보유기간: 1년
+    </div>
+    <div class="cta"><button class="bsub" id="btnSubmit">주문 신청하기</button></div>
+  </div>
+</div>
+
+<!-- 완료 시트 -->
+<div class="ov" id="shOK">
+  <div class="sh">
+    <div class="shh"></div>
+    <div class="sw">
+      <div class="sic"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="stt">주문이 접수됐어요</div>
+      <div class="std">신진평장터과일에서<br>신선한 상품을 준비해 드릴게요</div>
+    </div>
+    <div class="onb"><div class="onl">주문번호</div><div class="onv" id="onDisp"></div></div>
+    <div class="kn">카카오톡으로 결제 링크를 보내드려요. 결제 완료 후 배달이 진행됩니다.</div>
+    <button class="bcl" id="btnCloseOK">확인</button>
+  </div>
+</div>
+
+<!-- 주문내역 시트 -->
+<div class="ov" id="shMyOrders">
+  <div class="sh">
+    <div class="shh"></div>
+    <div class="sht">주문내역</div>
+    <div class="shs">전화번호로 내 주문을 확인해요</div>
+    <div class="sbar">
+      <input class="sinp2" id="srPh" type="tel" placeholder="010-0000-0000">
+      <button class="sbtn" id="btnSearch">조회</button>
+    </div>
+    <div id="myOrdRes"></div>
+    <div style="height:24px"></div>
+  </div>
+</div>
+
+<!-- 공유 시트 -->
+<div class="ov" id="shShare">
+  <div class="sh">
+    <div class="shh"></div>
+    <div class="sht">공유하기</div>
+    <div class="shs">고객들에게 주문 페이지를 공유해요</div>
+    <div class="shi" id="btnCopyLink">
+      <div class="shic iccp"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+      <div><div class="shl">링크 복사</div><div class="shd">현재 페이지 주소를 복사해요</div></div>
+    </div>
+    <div class="shi" id="btnToggleQR">
+      <div class="shic icqr"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 20h3"/></svg></div>
+      <div><div class="shl">QR 코드</div><div class="shd">QR코드를 생성해서 공유해요</div></div>
+    </div>
+    <div id="qrCon" style="display:none">
+      <div class="qrw"><div id="qrImg"></div><p>이 QR코드를 스캔하면 주문 페이지로 이동해요</p><div class="qru" id="qrUrl"></div></div>
+    </div>
+    <div style="height:24px"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════
+// Firestore REST API (CDN 없음 - 순수 fetch)
+// ════════════════════════════════════════════════════
+var PROJECT='sjpk-market';
+var BASE='https://firestore.googleapis.com/v1/projects/'+PROJECT+'/databases/(default)/documents';
+
+function fromFS(val){
+  if(!val)return null;
+  if('stringValue'  in val)return val.stringValue;
+  if('integerValue' in val)return parseInt(val.integerValue);
+  if('doubleValue'  in val)return val.doubleValue;
+  if('booleanValue' in val)return val.booleanValue;
+  if('nullValue'    in val)return null;
+  if('timestampValue' in val)return{seconds:Math.floor(new Date(val.timestampValue).getTime()/1000)};
+  if('mapValue'     in val)return fromFSObj(val.mapValue.fields||{});
+  if('arrayValue'   in val)return(val.arrayValue.values||[]).map(fromFS);
+  return null;
+}
+function fromFSObj(f){var o={};Object.keys(f).forEach(function(k){o[k]=fromFS(f[k]);});return o;}
+function toFS(v){
+  if(v===null||v===undefined)return{nullValue:null};
+  if(typeof v==='boolean')return{booleanValue:v};
+  if(typeof v==='number')return Number.isInteger(v)?{integerValue:String(v)}:{doubleValue:v};
+  if(typeof v==='string')return{stringValue:v};
+  if(Array.isArray(v))return{arrayValue:{values:v.map(toFS)}};
+  if(typeof v==='object'){var f={};Object.keys(v).forEach(function(k){f[k]=toFS(v[k]);});return{mapValue:{fields:f}};}
+  return{nullValue:null};
+}
+function toFSBody(data){var f={};Object.keys(data).forEach(function(k){f[k]=toFS(data[k]);});return{fields:f};}
+function fsReq(method,path,body){
+  var opts={method:method,headers:{'Content-Type':'application/json'}};
+  if(body)opts.body=JSON.stringify(body);
+  return fetch(BASE+path,opts).then(function(r){
+    if(!r.ok)return r.json().then(function(e){throw new Error((e.error&&e.error.message)||r.statusText);});
+    if(method==='DELETE')return null;
+    return r.json();
+  });
+}
+function fsGetAll(col){
+  return fsReq('GET','/'+col+'?pageSize=300').then(function(res){
+    if(!res||!res.documents)return[];
+    return res.documents.map(function(doc){
+      var id=doc.name.split('/').pop();
+      return Object.assign({id:id},fromFSObj(doc.fields||{}));
+    });
+  });
+}
+function fsAdd(col,data){
+  return fsReq('POST','/'+col,toFSBody(data)).then(function(doc){return doc.name.split('/').pop();});
+}
+function fsUpdate(col,id,data){
+  var keys=Object.keys(data);
+  var mask=keys.map(function(k){return'updateMask.fieldPaths='+encodeURIComponent(k);}).join('&');
+  return fsReq('PATCH','/'+col+'/'+id+'?'+mask,toFSBody(data));
+}
+
+// ════════════════════════════════════════════════════
+// 헬퍼
+// ════════════════════════════════════════════════════
+function today(){return new Date().toISOString().split('T')[0];}
+function fmtDate(d){
+  var dt=new Date(d+'T00:00:00'),w=['일','월','화','수','목','금','토'];
+  return{label:(dt.getMonth()+1)+'월 '+dt.getDate()+'일 ('+w[dt.getDay()]+')',isToday:d===today()};
+}
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2500);
+}
+function openSheet(id){document.getElementById(id).classList.add('open');}
+function closeSheet(id){document.getElementById(id).classList.remove('open');}
+['shOrder','shMyOrders','shShare'].forEach(function(id){
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)closeSheet(id);});
+});
+
+// ════════════════════════════════════════════════════
+// 상태
+// ════════════════════════════════════════════════════
+var allProds=[],cart={},selDate=today(),selCat='전체',curPay='카드결제';
+
+// ════════════════════════════════════════════════════
+// 데이터 로드 (5초 폴링)
+// ════════════════════════════════════════════════════
+function loadProds(){
+  fsGetAll('products').then(function(docs){
+    allProds=docs.sort(function(a,b){return(a.date||'').localeCompare(b.date||'');});
+    renderAll();
+  }).catch(function(e){
+    document.getElementById('prodList').innerHTML='<div class="empty"><div class="et">불러오기 실패</div><div class="es">'+e.message+'</div></div>';
+    document.getElementById('evTitle').textContent='오류 발생';
+  });
+}
+loadProds();
+setInterval(loadProds,5000);
+
+// ════════════════════════════════════════════════════
+// 렌더
+// ════════════════════════════════════════════════════
+function renderAll(){renderDateTabs();renderEvBanner();renderChips();renderProds();renderCartBtn();}
+function getDates(){
+  var d=[];allProds.forEach(function(p){if(p.date&&d.indexOf(p.date)<0)d.push(p.date);});return d.sort();
+}
+function renderDateTabs(){
+  var dates=getDates();
+  if(dates.length&&dates.indexOf(selDate)<0)selDate=dates[dates.length-1];
+  var el=document.getElementById('dateTabs');
+  if(!dates.length){el.innerHTML='';return;}
+  el.innerHTML=dates.map(function(d){
+    var f=fmtDate(d),cnt=allProds.filter(function(p){return p.date===d&&!p.soldOut;}).length;
+    return'<button class="dtab'+(d===selDate?' on':'')+'" data-date="'+d+'">'+f.label+'<span class="sub">'+(f.isToday?'오늘':cnt+'종')+'</span></button>';
+  }).join('');
+  el.querySelectorAll('.dtab').forEach(function(btn){
+    btn.addEventListener('click',function(){selDate=this.dataset.date;selCat='전체';cart={};renderAll();});
+  });
+}
+function renderEvBanner(){
+  if(!getDates().length){document.getElementById('evTitle').textContent='등록된 공구가 없어요';document.getElementById('evMeta').textContent='';return;}
+  var f=fmtDate(selDate);
+  document.getElementById('evTitle').textContent=f.label+' 공동구매';
+  document.getElementById('evMeta').textContent=f.isToday?'오늘 주문 마감 · 결제 안내는 카카오톡으로 드려요':'사전 예약 주문';
+}
+function renderChips(){
+  var cats=['전체'];
+  allProds.filter(function(p){return p.date===selDate;}).forEach(function(p){if(cats.indexOf(p.cat)<0)cats.push(p.cat);});
+  var el=document.getElementById('chips');
+  el.innerHTML=cats.map(function(c){return'<button class="chip'+(c===selCat?' on':'')+'" data-cat="'+c+'">'+c+'</button>';}).join('');
+  el.querySelectorAll('.chip').forEach(function(btn){
+    btn.addEventListener('click',function(){selCat=this.dataset.cat;renderChips();renderProds();});
+  });
+}
+function renderProds(){
+  var ps=allProds.filter(function(p){return p.date===selDate;});
+  if(selCat!=='전체')ps=ps.filter(function(p){return p.cat===selCat;});
+  var el=document.getElementById('prodList');
+  if(!ps.length){el.innerHTML='<div class="empty"><div class="et">상품이 없어요</div><div class="es">다른 날짜를 선택해보세요</div></div>';return;}
+  var grp={};ps.forEach(function(p){if(!grp[p.cat])grp[p.cat]=[];grp[p.cat].push(p);});
+  var html='';
+  Object.keys(grp).forEach(function(cat){
+    html+='<div class="sdiv"></div><div class="cathd">'+cat+'</div>';
+    grp[cat].forEach(function(p){
+      var qty=cart[p.id]||0;
+      html+='<div class="pd'+(p.soldOut?' sold':'')+'">'+
+        '<div class="pdi">'+
+        (p.soldOut?'<span class="tag to">품절</span>':p.hot?'<span class="tag th">인기</span>':'')+
+        '<div class="pdn">'+p.name+'</div>'+
+        (p.desc?'<div class="pdd">'+p.desc+'</div>':'')+
+        '<div class="pdp">'+p.price.toLocaleString()+'원<span class="sl">/ '+(p.unit||'')+'</span></div>'+
+        (p.stock>0&&p.stock<=5?'<div class="stlow">['+p.stock+'개 남음] 임박!</div>':'')+
+        '</div>'+
+        '<div class="qc">'+
+        '<button class="qb mi" data-id="'+p.id+'" data-d="-1"'+(qty===0?' disabled':'')+'>−</button>'+
+        '<span class="qn">'+qty+'</span>'+
+        '<button class="qb pl" data-id="'+p.id+'" data-d="1">+</button>'+
+        '</div></div>';
+    });
+  });
+  el.innerHTML=html;
+  el.querySelectorAll('[data-d]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var id=this.dataset.id,delta=parseInt(this.dataset.d);
+      var n=Math.max(0,(cart[id]||0)+delta);
+      if(n===0)delete cart[id];else cart[id]=n;
+      renderProds();renderCartBtn();
+    });
+  });
+}
+function renderCartBtn(){
+  var total=Object.values(cart).reduce(function(a,b){return a+b;},0);
+  var btn=document.getElementById('btnOrder');
+  if(!total){btn.textContent='상품을 선택해주세요';btn.disabled=true;return;}
+  var price=0;
+  Object.keys(cart).forEach(function(id){var p=allProds.find(function(x){return x.id===id;});if(p)price+=p.price*cart[id];});
+  btn.textContent=total+'개 담기 · '+price.toLocaleString()+'원';btn.disabled=false;
+}
+
+// ════════════════════════════════════════════════════
+// 주문 시트
+// ════════════════════════════════════════════════════
+document.getElementById('btnOrder').addEventListener('click',function(){buildSummary();openSheet('shOrder');});
+function buildSummary(){
+  var html='',total=0;
+  Object.keys(cart).forEach(function(id){
+    var p=allProds.find(function(x){return x.id===id;});if(!p)return;
+    var sub=p.price*cart[id];total+=sub;
+    html+='<div class="or"><span class="nm">'+p.name+' × '+cart[id]+' '+(p.unit||'')+'</span><span class="am">'+sub.toLocaleString()+'원</span></div>';
+  });
+  html+='<div class="or tot"><span>합계</span><span class="am">'+total.toLocaleString()+'원</span></div>';
+  document.getElementById('ordSum').innerHTML=html;
+  var me=JSON.parse(localStorage.getItem('sjpk_me')||'{}');
+  document.getElementById('iNm').value=me.name||'';
+  document.getElementById('iPh').value=me.phone||'';
+  document.getElementById('iAd').value=me.addr||'';
+  document.getElementById('iNo').value='';
+  curPay='카드결제';
+  document.querySelectorAll('.po button').forEach(function(b){b.classList.remove('on');});
+  document.querySelector('[data-pay="카드결제"]').classList.add('on');
+}
+document.querySelectorAll('.po button').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.po button').forEach(function(b){b.classList.remove('on');});
+    this.classList.add('on');curPay=this.dataset.pay;
+  });
+});
+document.getElementById('btnSubmit').addEventListener('click',function(){
+  var name=document.getElementById('iNm').value.trim();
+  var phone=document.getElementById('iPh').value.trim();
+  var ok=true;
+  ['iNm','iPh'].forEach(function(id){document.getElementById(id).classList.remove('err');});
+  ['eNm','ePh'].forEach(function(id){document.getElementById(id).classList.remove('show');});
+  if(!name){document.getElementById('iNm').classList.add('err');document.getElementById('eNm').classList.add('show');ok=false;}
+  if(!phone){document.getElementById('iPh').classList.add('err');document.getElementById('ePh').classList.add('show');ok=false;}
+  if(!ok)return;
+  localStorage.setItem('sjpk_me',JSON.stringify({name:name,phone:phone,addr:document.getElementById('iAd').value}));
+  var items=[],total=0;
+  Object.keys(cart).forEach(function(id){
+    var p=allProds.find(function(x){return x.id===id;});
+    if(p){items.push({name:p.name,qty:cart[id],unit:p.unit||'',price:p.price,sub:p.price*cart[id]});total+=p.price*cart[id];}
+  });
+  var num='SJP-'+Date.now().toString().slice(-7);
+  var btn=this;btn.textContent='저장 중...';btn.disabled=true;
+  // serverTimestamp는 REST에서 transform으로 처리
+  var data={orderId:num,name:name,phone:phone,addr:document.getElementById('iAd').value,
+    note:document.getElementById('iNo').value,payMethod:curPay,items:items,total:total,
+    date:selDate,status:'pending',createdAt:new Date().toISOString()};
+  fsAdd('orders',data).then(function(){
+    cart={};closeSheet('shOrder');
+    document.getElementById('onDisp').textContent=num;
+    openSheet('shOK');renderAll();
+  }).catch(function(e){toast('주문 저장 실패: '+e.message);console.error(e);})
+   .finally(function(){btn.textContent='주문 신청하기';btn.disabled=false;});
+});
+document.getElementById('btnCloseOK').addEventListener('click',function(){closeSheet('shOK');});
+
+// ════════════════════════════════════════════════════
+// 주문내역 조회
+// ════════════════════════════════════════════════════
+document.getElementById('btnMyOrders').addEventListener('click',function(){
+  document.getElementById('myOrdRes').innerHTML='';
+  document.getElementById('srPh').value='';
+  var me=JSON.parse(localStorage.getItem('sjpk_me')||'{}');
+  if(me.phone)document.getElementById('srPh').value=me.phone;
+  openSheet('shMyOrders');
+});
+document.getElementById('srPh').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btnSearch').click();});
+document.getElementById('btnSearch').addEventListener('click',function(){
+  var ph=document.getElementById('srPh').value.trim();
+  if(!ph){toast('전화번호를 입력해주세요');return;}
+  var el=document.getElementById('myOrdRes');
+  el.innerHTML='<div class="loading"><div class="spin"></div><span>조회 중...</span></div>';
+  fsGetAll('orders').then(function(all){
+    var clean=ph.replace(/-/g,'');
+    var ords=all.filter(function(o){return (o.phone||'').replace(/-/g,'')===clean;});
+    ords.sort(function(a,b){
+      var at=typeof a.createdAt==='string'?new Date(a.createdAt).getTime():(a.createdAt&&a.createdAt.seconds?a.createdAt.seconds*1000:0);
+      var bt=typeof b.createdAt==='string'?new Date(b.createdAt).getTime():(b.createdAt&&b.createdAt.seconds?b.createdAt.seconds*1000:0);
+      return bt-at;
+    });
+    if(!ords.length){el.innerHTML='<div class="nores">주문 내역이 없어요</div>';return;}
+    el.innerHTML=ords.map(function(o){
+      var ts='';
+      var ct=o.createdAt;
+      if(typeof ct==='string'){var d=new Date(ct);ts=(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();}
+      else if(ct&&ct.seconds){var d=new Date(ct.seconds*1000);ts=(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();}
+      var items=(o.items||[]).map(function(i){return i.name+' × '+i.qty+' '+i.unit;}).join(', ');
+      var badge=o.status==='done'?'<span class="badge bdd">완료</span>':'<span class="badge bpp">접수</span>';
+      return'<div class="moc"><div class="moc-tp"><div><div class="mocn">'+o.name+'</div><div class="mocd">'+ts+' · '+(o.orderId||'')+'</div></div>'+badge+'</div>'+
+        '<div class="moci">'+items+(o.payMethod?'<br>결제: '+o.payMethod:'')+'</div>'+
+        '<div class="moct">'+o.total.toLocaleString()+'원</div></div>';
+    }).join('');
+  }).catch(function(e){el.innerHTML='<div class="nores">조회 실패: '+e.message+'</div>';console.error(e);});
+});
+
+// ════════════════════════════════════════════════════
+// 공유
+// ════════════════════════════════════════════════════
+document.getElementById('btnShare').addEventListener('click',function(){document.getElementById('qrCon').style.display='none';openSheet('shShare');});
+document.getElementById('btnCopyLink').addEventListener('click',function(){
+  var url=location.href;
+  if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){toast('링크가 복사됐어요');});}
+  else{var ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('링크가 복사됐어요');}
+});
+document.getElementById('btnToggleQR').addEventListener('click',function(){
+  var c=document.getElementById('qrCon');
+  if(c.style.display==='none'){
+    c.style.display='block';
+    document.getElementById('qrUrl').textContent=location.href;
+    document.getElementById('qrImg').innerHTML='<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(location.href)+'&format=png&margin=10" style="width:200px;height:200px;border-radius:12px" alt="QR">';
+  }else{c.style.display='none';}
+});
+</script>
+</body>
+</html>
